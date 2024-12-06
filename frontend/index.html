@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample App</title>
+    <style>
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        input {
+            padding: 12px;
+            border: none;
+            outline: none;
+            border-bottom: 1px solid black;
+        }
+
+        button {
+            padding: 10px;
+            background-color: yellow;
+            color: rgb(0, 0, 0);
+            border: none;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    
+    <h1>Sample App</h1>
+    <div class="container">
+        <form id="userForm">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <button type="submit">Add User</button>
+        </form>
+        <h2>Users:</h2>
+        <div id="users"></div>
+    </div>
+    <script>
+        const API_URL = 'http://192.168.122.100:4000';
+
+        document.getElementById('userForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+
+            await fetch(`${API_URL}/users`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email })
+            });
+
+            fetchUsers();
+        });
+
+        async function fetchUsers() {
+            const res = await fetch(`${API_URL}/users`);
+            const users = await res.json();
+            const usersDiv = document.getElementById('users');
+            usersDiv.innerHTML = '';
+            users.forEach(user => {
+                usersDiv.innerHTML += `<div class="user">${user.name} (${user.email})</div>`;
+            });
+        }
+
+        fetchUsers();
+    </script>
+</body>
+</html>
